@@ -17,17 +17,14 @@ from selenium import webdriver
 import time
 import pandas as pd
 
-def single_game():    
-    game_dict = pd.DataFrame(columns=('rounds','date','main','home','away','company','win','draw','lose', 'change_time'))
-    ppp = game.get_attribute('href')
-    newwindow =  'window.open("' + ppp +'");'
-  
-    driver.execute_script(newwindow)
-    time.sleep(2)
-    handles = driver.window_handles
-    time.sleep(1)
-    driver.switch_to.window(handles[-1])
-    time.sleep(1)
+def single_game(league,driver):    
+    
+    rounds = driver.find_elements_by_class_name("centerGameInfo")[0].find_elements_by_tag_name("p")[0].text
+    
+    if league not in rounds:
+        return None, driver
+
+    game_dict = pd.DataFrame(columns=('rounds','date','game','home','away','company','win','draw','lose', 'change_time'))
     
     ddd = driver.find_elements_by_id("shijian")[0].text[5:15]
     
@@ -55,9 +52,9 @@ def single_game():
                 hhhh.append(float(ooo.text[0:4]))
             hhhh.append(dt.datetime.strptime(odd_list[4].text, "%Y-%m-%d %H:%M"))   
              
-            game_dict = game_dict.append(pd.DataFrame({'rounds':[driver.find_elements_by_class_name("centerGameInfo")[0].find_elements_by_tag_name("p")[0].text],
+            game_dict = game_dict.append(pd.DataFrame({'rounds':[rounds],
                'date':[ddd],
-               'main':[driver.find_elements_by_class_name("enName")[0].text+ " vs " + driver.find_elements_by_class_name("enName")[1].text],
+               'game':[driver.find_elements_by_class_name("enName")[0].text+ " vs " + driver.find_elements_by_class_name("enName")[1].text],
                'home':[driver.find_elements_by_class_name("enName")[0].text],
                'away':[driver.find_elements_by_class_name("enName")[1].text],
                'company':[co_name],
@@ -79,17 +76,9 @@ def single_game():
     game_dict['resault'] = gggg[6]
     game_dict['score'] = gggg[5]
     
-    return game_dict
+    return game_dict, driver
+    
 
-
-driver = webdriver.Chrome()
-#driver = webdriver.Firefox(executable_path = "geckodriver")
-driver.get('http://odds.sports.sina.com.cn/liveodds/match_search.php?date=2020-01-11')
-time.sleep(3)
-games = driver.find_elements_by_xpath("//*[@href]")
-time.sleep(1)
-for game in games[1:2]:
-    rrr = single_game()
 
 
     

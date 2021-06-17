@@ -9,8 +9,9 @@ import datetime as dt
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import time
-import pandas as pd
 
+import pandas as pd
+import yaml
 
 def sig(game_url):
     option = Options()

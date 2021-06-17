@@ -13,6 +13,7 @@ import time
 import pandas as pd
 import yaml
 
+kk= 12
 def sig(game_url):
     option = Options()
     option.add_argument('--headless')
